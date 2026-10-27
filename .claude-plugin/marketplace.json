@@ -1,0 +1,7 @@
+{
+  "name": "baqer-skills",
+  "owner": { "name": "Baqer" },
+  "plugins": [
+    { "name": "reels-59", "source": "./", "description": "مهارة ريلز 59 ثانية" }
+  ]
+}
