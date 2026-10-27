@@ -1,6 +1,6 @@
 ---
 name: reels-59
-description: "مونتاج ريلز عمودية بمدة 59 ثانية في Adobe Premiere Pro عبر MCP، تُبنى قطعاتها على إيقاع خلفية صوتية (قصيدة، آهات، موسيقى)، مع فحص جودة اللقطات وتصحيح لوني أولي وكابشن وصبغة لونية نهائية حسب الطلب. استخدمها لأي طلب مثل: سوّ لي ريلز، مونتاج على قصيدة، قطعات على الآهات، ريل سينمائي أو إعلاني. Use for any 59-second vertical reel edited to an audio bed in Premiere Pro."
+description: "مونتاج ريلز عمودية بمدة 59 ثانية في Adobe Premiere Pro عبر MCP، أو عبر HyperFrames عند عدم توفره، تُبنى قطعاتها على إيقاع خلفية صوتية (قصيدة، آهات، موسيقى)، مع فحص جودة اللقطات وتصحيح لوني أولي وكابشن وصبغة لونية نهائية حسب الطلب. استخدمها لأي طلب مثل: سوّ لي ريلز، مونتاج على قصيدة، قطعات على الآهات، ريل سينمائي أو إعلاني. Use for any 59-second vertical reel edited to an audio bed in Premiere Pro or HyperFrames."
 ---
 
 # مهارة: مونتاج ريلز 59 ثانية
@@ -102,4 +102,26 @@ description: "مونتاج ريلز عمودية بمدة 59 ثانية في Ado
 
 ## 12. إذا لم تتوفر أدوات MCP
 
-لا تتظاهر بأنك نفّذت المونتاج. قدّم بدلاً من ذلك خطة مونتاج مكتوبة: جدول فيه وقت كل قطع، واللقطة المقترحة، والإعدادات اللونية، ليطبّقها المستخدم يدوياً.
+لا تتظاهر بأنك نفّذت المونتاج. إذا كانت مهارات HyperFrames مثبّتة (`/hyperframes`) أو طلبها المستخدم، فانتقل إلى القسم 13. وإلا قدّم خطة مونتاج مكتوبة: جدول فيه وقت كل قطع، واللقطة المقترحة، والإعدادات اللونية، ليطبّقها المستخدم يدوياً.
+
+## 13. التنفيذ عبر HyperFrames (بدلاً من Premiere)
+
+اتبع الأقسام 1 إلى 11 كما هي، لكن نفّذ كل خطوة بمقابلها في HyperFrames. اقرأ `/hyperframes` و`/hyperframes-cli` و`/media-use` أولاً، وقواعدها هي المرجع عند أي تعارض في التفاصيل التقنية. يحتاج ذلك Node.js 22 أو أحدث وFFmpeg، ولا يحتاج حساب HeyGen إلا لتوليد صوت أو أفاتار.
+
+| خطوة المهارة | المقابل في HyperFrames |
+|---|---|
+| إعداد التسلسل (2) | `npx hyperframes init <dir>`، ثم في `index.html` الجذري: `data-width="1080"` و`data-height="1920"` و`data-duration="59"`. المدة الافتراضية للمشروع الجديد أفقية، فغيّرها. |
+| المسارات (2) | `data-track-index` لكل عنصر؛ اللقطات على مسار، والكابشن على مضيف واحد بـ `data-track-kind="captions"`، والصوت عنصر `<audio>` له `id`. |
+| تحليل الصوت والـ Markers (3) | `npx hyperframes audio <track> --only sections,onsets,moments --json` و`npx hyperframes beats`. نقاط القطع تصير قيم `data-start` و`data-duration` لكل لقطة. للقصيدة: `npx hyperframes transcribe <file> --json` لتوقيت نهايات الأبيات. |
+| اختيار المقطع والـ Fade (3) | `data-media-start` على الـ `<audio>` لبدء الصوت من أقوى لحظة. |
+| فحص اللقطات (4) | لا يوجد في HyperFrames فحص للاهتزاز أو التركيز: استعمل `ffprobe` للمعلومات، و`npx hyperframes snapshot` لرؤية إطارات من كل لقطة، واستبعد المهتز والضبابي. التثبيت عبر فلتر `vidstab` في FFmpeg إن كان متاحاً (`ffmpeg -filters`)، وإلا استبعد اللقطة. |
+| الإطار العمودي (4) | أعد تأطير اللقطة الأفقية (Reframe / crop في `/media-use`) ولا تضغطها. |
+| بناء القطعات (5) | `<video>` لكل لقطة، موقوتة بـ `data-start`/`data-duration`، وبـ `data-media-start` لنقطة الدخول داخل اللقطة. صوت اللقطات مكتوم ما لم يُطلب (`data-has-audio="true"`). للتعديل: `npx hyperframes timeline move|trim|split`. |
+| التصحيح الأولي (6) | `npx hyperframes media-treatment --capabilities --json`، ثم تصحيح لكل لقطة (`whiteBalance` و`exposure` و`shadowsHighlights`) بـ `--selector` يحدد اللقطة. لا فلاتر CSS. |
+| الكابشن (7) | `references/captions.md` في `/hyperframes`. المنطقة الآمنة في HyperFrames أشد من القسم 7: لا نص فوق 168 بكسل ولا تحت 1330 بكسل؛ التزم بالأشد. |
+| الصبغة النهائية (8) | `npx hyperframes media-use resolve --type grade --intent "<الطابع>" --project . --json`، ثم `media-treatment --grading ... --apply` على كل لقطة. للسينمائي ابدأ من LUT ‏`teal-orange-blockbuster` أو `film-fade` بشدة منخفضة. اذكر للمستخدم الإعدادات المستخدمة. |
+| الصوت (9) | `npx hyperframes normalize-audio`، ثم تحقق من الملف النهائي بـ `npx hyperframes audio <video> --json` (‎-14 LUFS‎ تقريباً، والذروة ‎-1 dBTP‎ أو أقل). |
+| المراجعة (11) | `npx hyperframes lint` ثم `check --json` ثم `snapshot`، ثم `preview` ليراجع المستخدم في Studio قبل التصدير. |
+| التصدير (10) | `npx hyperframes render --quality draft` أثناء العمل، و`--quality delivery --output [الموضوع]_reel_[التاريخ].mp4` للنهائي. تحقق بـ `ffprobe` أن المدة 59 ثانية. |
+
+**حدود يجب إبلاغ المستخدم بها:** لا يوجد مقابل كامل لـ Warp Stabilizer ولا لـ Auto Reframe الذكي، والتلوين أقل دقة من Lumetri. وفي ويندوز PowerShell ضع قيمة `--grading` في ملف JSON بدل كتابتها مباشرة.
