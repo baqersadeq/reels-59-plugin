@@ -1,6 +1,9 @@
 {
   "name": "reels-59",
   "description": "مهارة ريلز 59 ثانية",
-  "version": "1.0.0",
-  "author": { "name": "Baqer" }
+  "version": "1.0.1",
+  "author": {
+    "name": "Baqer"
+  },
+  "license": "MIT"
 }

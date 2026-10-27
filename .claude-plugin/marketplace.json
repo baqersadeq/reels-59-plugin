@@ -1,7 +1,14 @@
 {
   "name": "baqer-skills",
-  "owner": { "name": "Baqer" },
+  "owner": {
+    "name": "Baqer"
+  },
+  "description": "مهارات باقر لـ Claude Code: مونتاج ريلز عمودية 59 ثانية في Premiere Pro.",
   "plugins": [
-    { "name": "reels-59", "source": "./", "description": "مهارة ريلز 59 ثانية" }
+    {
+      "name": "reels-59",
+      "source": "./",
+      "description": "مهارة ريلز 59 ثانية"
+    }
   ]
 }
