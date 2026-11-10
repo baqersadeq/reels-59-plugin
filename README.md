@@ -16,3 +16,11 @@ Requires Git.
 ## Use
 
 Type `/reels-59`, or ask naturally, e.g. «سوّ لي ريلز على هذه القصيدة».
+
+## Tools
+
+`tools/logo-anim/` builds animated logo overlays (ProRes 4444 with alpha) and a 5-second outro for 1080×1920 reels. On Windows:
+
+```
+powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/baqersadeq/reels-59-plugin/main/tools/logo-anim/run.ps1 | iex"
+```
